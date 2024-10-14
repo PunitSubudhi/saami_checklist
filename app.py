@@ -5,6 +5,7 @@ from zoho_oauth2 import ZohoAPITokens
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import time
+import requests as rq
 
 load_dotenv()
 
@@ -17,6 +18,17 @@ try:
     print("Pinged your deployment. You successfully connected to MongoDB!")
 except Exception as e:
     print(e)
+
+def send_push_notification(notification_data):
+    url = f"https://ntfy.sh/{os.getenv('ntfy_topic')}"
+    rq.post(url, json=notification_data)
+
+def process_data(data):
+    processed_data = {}
+    processed_data['timestamp'] = time.time()
+    
+    
+    return processed_data
 
 
 '''
@@ -38,11 +50,15 @@ def home_page():
     if request.headers.get('type') == 'form':
         #get the form data
         form_data = request.json
-        #Parse timestamp from form data and add it to the form data
-        form_data['timestamp'] = time.time()
-        print(form_data)
+        #push raw data to the database
+        result = db['raw'].insert_one(form_data)
+        
+        send_push_notification(f"New form submission from {form_data['filledby']}")
+        
+        #process the data
+        processed_data = process_data(form_data)
         #insert the form data to the database
-        result = db['forms'].insert_one(form_data)
+        result = db['processed'].insert_one(processed_data)
         
         return f"{result}"
     
