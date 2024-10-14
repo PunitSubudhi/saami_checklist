@@ -1,7 +1,6 @@
 from dotenv import load_dotenv
 import os
 from flask import Flask,request
-from zoho_oauth2 import ZohoAPITokens
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import time
@@ -63,4 +62,5 @@ def home_page():
         return f"{result}"
     
     
-    
+if __name__ == "__main__":
+    app.run(debug=True)
