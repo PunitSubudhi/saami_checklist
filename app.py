@@ -5,6 +5,7 @@ from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 import time
 import requests as rq
+import json
 
 load_dotenv()
 
@@ -52,7 +53,7 @@ def home_page():
         #push raw data to the database
         result = db['raw'].insert_one(form_data)
         
-        send_push_notification(f"New form submission from {form_data['filledby']}")
+        send_push_notification(f"New form submission from {form_data['filledby']}\nForms Data: {json.dumps(form_data)}")
         
         #process the data
         processed_data = process_data(form_data)
