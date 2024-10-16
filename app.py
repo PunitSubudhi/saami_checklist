@@ -45,7 +45,7 @@ def home_page():
     #if it does, then it is a form submission
     if request.headers.get('type') is None:
         #return the last 10 documents from the database according to timestamp
-        return f"{list(db['forms'].find().sort('timestamp',-1).limit(10))}"
+        return f"{list(db['forms'].find().sort('timestamp',1).limit(10))}"
     if request.headers.get('type') == 'form':
         #get the form data
         form_data = request.json
